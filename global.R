@@ -7,10 +7,8 @@ library(crosstalk)
 library(pool)
 library(DBI)
 
-library(plotly)
 library(DT)
 library(leaflet)
-library(ggvis)
 library(ggplot2)
 library(cowplot)
 

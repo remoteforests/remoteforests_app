@@ -47,7 +47,7 @@ observeEvent(input$get_plot_b, {
         geom_path(data = circleFun(r = 17.84), aes(x = X, y = Y), color = "black", size = 0.3)+
         geom_path(data = circleFun(r = 21.85), aes(x = X, y = Y), color = "black", size = 0.3)+
         geom_text( aes(x_m+0.5, y_m+0.5 , label = treen), size = 3, color = "grey20")+
-        ggtitle(PL_in) +
+        ggtitle(input$pl_selplot_in) +
         theme(legend.position='right')
       } else {
         position_gplot <- ggplot()
