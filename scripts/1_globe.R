@@ -2,39 +2,23 @@
 # credentials and data loading --------------------------------------------
 
 # Create leaflet map and visualization ------------------------------------
-#-- map
-map_header <- paste("<table>
-                    <tr>
-                    <td><strong>Site_ID - </strong></td>
-                    <td>",plot.unique.df$plotid,"</td>
-                    </tr>
-                    <tr>
-                    <td><strong>Species - </strong></td>
-                    <td>",plot.unique.df$foresttype,"</td>
-                    </tr>
-                    <tr>
-                    <td><strong>Altitude - </strong></td>
-                    <td>",plot.unique.df$altitude_m,"</td>
-                    </tr>
-                    </table>", sep="")
-
 treeIcons <- iconList(
   beech = makeIcon(iconUrl = "www/beech.png", iconWidth = 9, iconHeight = 12),
   spruce = makeIcon(iconUrl = "www/spruce.png", iconWidth = 9, iconHeight = 12)
 )
 
-plotMap <- plot.unique.df %>%
+plotMap <- leaflet.df %>%
   leaflet() %>%
   addTiles("http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", options=tileOptions(opacity=0.6)) %>%
   addTiles("http://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", options = tileOptions(opacity = 0.5)) %>%
   #addProviderTiles(providers$CartoDB.Positron) %>% 
-  addMarkers(~lng,
-             ~lat,
+  addMarkers(~longitude,
+             ~latitude,
              icon = ~treeIcons[foresttype],
-             popup =  map_header)
+             popup =  ~paste('<b>Plot_ID:</b> ', plot_name, '<br><b>Species:</b> ', foresttype, '<br><b>Inventory:</b> ', inventory, '<br><b>Altitude:</b> ', altitude_m))
 
 #-- aspect
-asp <- plot.unique.df %>%
+asp <- leaflet.df %>%
   mutate(foresttype = ifelse(foresttype %in% "spruce","Picea abies", "Fagus sylvatica")) %>%
   ggplot() +
   geom_histogram(aes(aspect, fill = foresttype), binwidth = 10) +
@@ -44,7 +28,7 @@ asp <- plot.unique.df %>%
   scale_x_continuous(breaks=seq(0, 359, by=90), expand=c(0,0), lim=c(0, 360))
 
 #-- slope
-alt <- plot.unique.df  %>%
+alt <- leaflet.df  %>%
   mutate(foresttype = ifelse(foresttype %in% "spruce","Picea abies", "Fagus sylvatica")) %>%
   ggplot() +
   geom_histogram(aes(altitude_m, fill = foresttype), binwidth = 50) +
