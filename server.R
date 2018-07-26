@@ -7,14 +7,15 @@ shinyServer(
   function(input, output,session) {
     
     # Dynamic variables -------------------------------------------------------
-    data_val <- reactiveValues(
-      plot.info.df = NULL,
-      tree.df = NULL,
-      tree.shiny = NULL,
-      regeneration.df = NULL,
-      deadwood.df = NULL,
-      gplot = NULL
-    )
+    # data_val <- reactiveValues(
+    #   # stand.df = NULL
+    #   plot.info.df = NULL,
+    #   # tree.df = NULL,
+    #   # tree.shiny = NULL,
+    #   # regeneration.df = NULL,
+    #   # deadwood.df = NULL,
+    #   # gplot = NULL
+    # )
 
     # General data overview ---------------------------------------------------
     output$gMap <- renderLeaflet(plotMap)

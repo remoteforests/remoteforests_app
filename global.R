@@ -2,14 +2,22 @@
 library(shiny)
 library(shinyBS)
 library(shinythemes)
-library(tidyverse)
-library(DBI)
-library(leaflet)
-library(DT)
-library(ggvis)
-library(cowplot)
+library(crosstalk)
+
 library(pool)
-#library(dbplot)
+library(DBI)
+
+library(plotly)
+library(DT)
+library(leaflet)
+library(ggvis)
+library(ggplot2)
+library(cowplot)
+
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(purrr)
 
 # Connections -------------------------------------------------------------
 source('pw.R')
@@ -17,20 +25,41 @@ source('pw.R')
 
 # Global data to be loaded ------------------------------------------------
 
-#-/ Tables connections
-plot.sql <- tbl(KEL, 'plot')
-tree.sql <- tbl(KEL, 'tree')
-tree.shiny <- tbl(KEL, sql('SELECT * FROM shiny.tree'))
+# Plot level
+plot.df <- tbl(KEL, 'plot') %>%
+  select(plot_id = id, date, plot_name = plotid, census, country, location, stand, standshort, subplot,
+    longitude = lng, latitude = lat, foresttype, plotsize, dbh_min, plottype, foresttype, altitude_m, slope, aspect) %>%
+  collect()
+  
+leaflet.df <- plot.df %>%
+  group_by(plot_name) %>%
+  summarise(longitude = mean(longitude, na.rm = T),
+            latitude = mean(latitude, na.rm = T),
+            altitude_m = mean(altitude_m, na.rm = T),
+            aspect = mean(aspect, na.rm = T),
+            foresttype = first(foresttype),
+            inventory = paste0(date, collapse = ', '))
 
-#-/ Static data
-plot.df <- plot.sql %>% collect()
-plot.unique.df <- plot.df %>% group_by(plotid) %>% arrange(desc(date)) %>% slice(1)
-
-
-
+# Tree table
+tree.df <- tbl(KEL, 'ring') %>%
+  group_by(core_id) %>%
+  summarise(age = n(),
+            year_min = min(year, na.rm = T)) %>%
+  inner_join(tbl(KEL, 'core') %>% select(core_id = id, tree_id), by = 'core_id') %>%
+  group_by(tree_id) %>%
+  summarise(age = max(age, na.rm = T),
+            year_min = min(year_min, na.rm = T)) %>%
+  left_join(tbl(KEL, 'tree') %>%
+      filter(onplot != 0) %>% 
+      select(plot_id, tree_id = id, treen,treetype, x_m, y_m, status, census, growth, layer, species, dbh_mm, height_m, decay), .,
+    by = 'tree_id') %>%
+  collect() %>%
+  mutate(species = if_else(!species %in% c("Abies alba", "Picea abies", "Fagus sylvatica"), 'Others', species),
+    status = cut(status, c(-Inf, 0, 9, Inf), c('stump', 'alive', 'dead')),
+    growth = recode(growth, `0` = 'supressed', `1` = 'released', .default = "NA" ),
+    layer = recode(layer, `11` = 'upper', `12` = 'middle', `13` = 'lower', .default = "NA" ))
 
 # Global functions --------------------------------------------------------
-
 toDT <- function(x){
   #' @description create a data table from teh data.frame
   x %>%
@@ -62,10 +91,7 @@ paste_col <- function( x ){
   unique(x) %>% paste(., collapse = '; ')
 }
 
-
 # Figure style ------------------------------------------------------------
-
-
 base_size <- 7
 gstyle <- list(
   theme_bw(base_size = base_size),
