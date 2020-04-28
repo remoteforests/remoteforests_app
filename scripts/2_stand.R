@@ -25,7 +25,7 @@ output$st_country_ui <- renderUI({
 
 
 output$st_stand_ui <- renderUI({
-  standid <- plot.df %>% filter(foresttype %in% input$st_foresttype_in, country %in% input$st_country_in) %>% pull(stand) %>% unique()
+  standid <- plot.df %>% filter(foresttype %in% input$st_foresttype_in, country %in% input$st_country_in) %>% pull(stand) %>% unique() 
   
   selectizeInput("st_stand_in", "Stand:", 
     choices = standid, selected = standid,
