@@ -4,7 +4,8 @@
 # Create leaflet map and visualization ------------------------------------
 treeIcons <- iconList(
   beech = makeIcon(iconUrl = "www/beech.png", iconWidth = 9, iconHeight = 12),
-  spruce = makeIcon(iconUrl = "www/spruce.png", iconWidth = 9, iconHeight = 12)
+  spruce = makeIcon(iconUrl = "www/spruce.png", iconWidth = 9, iconHeight = 12),
+  fraxinus = makeIcon(iconUrl = "www/fraxinus.png", iconWidth = 9, iconHeight = 12)
 )
 
 plotMap <- leaflet.df %>%
@@ -19,7 +20,10 @@ plotMap <- leaflet.df %>%
 
 #-- aspect
 asp <- leaflet.df %>%
-  mutate(foresttype = ifelse(foresttype %in% "spruce","Picea abies", "Fagus sylvatica")) %>%
+  mutate(foresttype = case_when(
+    foresttype %in% "spruce" ~ "Picea abies",
+    foresttype %in% "beech" ~ "Fagus sylvatica",
+    foresttype %in% "fraxinus" ~ "Fraxinus ornus")) %>%
   ggplot() +
   geom_histogram(aes(aspect, fill = foresttype), binwidth = 10) +
   coord_polar(start = 0)+
@@ -29,7 +33,10 @@ asp <- leaflet.df %>%
 
 #-- slope
 alt <- leaflet.df  %>%
-  mutate(foresttype = ifelse(foresttype %in% "spruce","Picea abies", "Fagus sylvatica")) %>%
+  mutate(foresttype = case_when(
+    foresttype %in% "spruce" ~ "Picea abies",
+    foresttype %in% "beech" ~ "Fagus sylvatica",
+    foresttype %in% "fraxinus" ~ "Fraxinus ornus")) %>%
   ggplot() +
   geom_histogram(aes(altitude_m, fill = foresttype), binwidth = 50) +
   gstyle + theme(legend.position="none") +

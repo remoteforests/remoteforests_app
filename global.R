@@ -52,7 +52,7 @@ tree.df <- tbl(KEL, 'ring') %>%
       select(plot_id, tree_id = id, treen,treetype, x_m, y_m, status, census, growth, layer, species, dbh_mm, height_m, decay), .,
     by = 'tree_id') %>%
   collect() %>%
-  mutate(species = if_else(!species %in% c("Abies alba", "Picea abies", "Fagus sylvatica"), 'Others', species),
+  mutate(species = if_else(!species %in% c("Abies alba", "Picea abies", "Fagus sylvatica", "Sorbus aria", "Fraxinus ornus", "Quercus petraea", "Ostrya carpinifolia"), 'Others', species),
     status = cut(status, c(-Inf, 0, 9, Inf), c('stump', 'alive', 'dead')),
     growth = recode(growth, `0` = 'supressed', `1` = 'released', .default = "NA" ),
     layer = recode(layer, `11` = 'upper', `12` = 'middle', `13` = 'lower', .default = "NA" ))
@@ -112,6 +112,10 @@ gstyle <- list(
   scale_fill_manual(values = c("Fagus sylvatica" = "#da2c3a",
                                "Picea abies" = "#78c2ef",
                                "Abies alba" = "#7CAE00",
+                               "Sorbus aria" = "#18f272", 
+                               "Fraxinus ornus" = "#c67d10", 
+                               "Quercus petraea" = "#d941e1", 
+                               "Ostrya carpinifolia" = "#755de9",
                                "Others" = "grey50",
                                'NA' = "grey50",
                                'upper' = "#da2c3a",
@@ -125,6 +129,10 @@ gstyle <- list(
   scale_color_manual(values = c("Fagus sylvatica" = "#da2c3a",
                                "Picea abies" = "#78c2ef",
                                "Abies alba" = "#7CAE00",
+                               "Sorbus aria" = "#18f272", 
+                               "Fraxinus ornus" = "#c67d10", 
+                               "Quercus petraea" = "#d941e1", 
+                               "Ostrya carpinifolia" = "#755de9",
                                "Others" = "grey50",
                                'NA' = "grey50",
                                'upper' = "#da2c3a",
