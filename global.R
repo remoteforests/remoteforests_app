@@ -24,7 +24,7 @@ source('pw.R')
 # Global data to be loaded ------------------------------------------------
 
 # Plot level
-plot.df <- tbl(KEL, 'plot') %>%
+plot.df <- tbl(KEL, 'plot') %>% filter(!foresttype %in% "managed") %>%
   select(plot_id = id, date, plot_name = plotid, census, country, location, stand, standshort, subplot,
     longitude = lng, latitude = lat, foresttype, plotsize, dbh_min, plottype, foresttype, altitude_m, slope, aspect) %>%
   collect()
@@ -49,7 +49,7 @@ tree.df <- tbl(KEL, 'ring') %>%
             year_min = min(year_min, na.rm = T)) %>%
   left_join(tbl(KEL, 'tree') %>%
       filter(onplot != 0) %>% 
-      select(plot_id, tree_id = id, treen,treetype, x_m, y_m, status, census, growth, layer, species, dbh_mm, height_m, decay), .,
+      select(plot_id, tree_id = id, treen, treetype, x_m, y_m, status, census, growth, layer, species, dbh_mm, height_m, decay), .,
     by = 'tree_id') %>%
   collect() %>%
   mutate(species = if_else(!species %in% c("Abies alba", "Picea abies", "Fagus sylvatica", "Sorbus aria", "Fraxinus ornus", "Quercus petraea", "Ostrya carpinifolia"), 'Others', species),
@@ -63,12 +63,12 @@ toDT <- function(x){
   x %>%
     datatable(escape = FALSE,
               rownames = FALSE,
-              extensions = 'Buttons',
-              list(dom = 'Bft',
+              #extensions = 'Buttons',
+              list(#dom = 'Bft',
                    scrollX = TRUE,
                    scrollY = "450px",
-                   pageLength = nrow(x),
-                   buttons = c('csv', 'copy'))
+                   #buttons = c('csv', 'copy'),
+                   pageLength = nrow(x))
     )
 }
 
