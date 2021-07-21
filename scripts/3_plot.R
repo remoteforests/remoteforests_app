@@ -8,7 +8,8 @@ observeEvent(input$get_plot_b, {
     # Plot level summary ------------------------------------------------------
     plot.info.df <- plot.df %>%
       filter(plot_id %in% plot_id_in) %>%
-      summarize_at(vars(country, location, plot_id, date, plotsize, dbh_min, foresttype, altitude_m, slope, aspect),
+      select(country, location, inventory = date, plotsize, dbh_min, foresttype, altitude_m, slope, aspect) %>%
+      summarize_at(vars(country, location, inventory, plotsize, dbh_min, foresttype, altitude_m, slope, aspect),
         funs(paste_col)) %>%
       t() %>%
       as.data.frame() %>%
@@ -84,13 +85,13 @@ observeEvent(input$get_plot_b, {
     incProgress(0.6)
     
     #--/ Download data
-    tree.sel <- KEL %>% tbl("tree") %>% filter(plot_id %in% plot_id_in) %>% collect()
+    tree.sel <- KEL %>% tbl("tree") %>% filter(plot_id %in% plot_id_in) %>% select(-id, -plot_id, -treetype, -x_m, -y_m, -census) %>% collect()
     
     incProgress(0.7)
-    regeneration.sel <- KEL %>% tbl("regeneration") %>% filter(plot_id %in% plot_id_in) %>% collect()
+    regeneration.sel <- KEL %>% tbl("regeneration") %>% filter(plot_id %in% plot_id_in) %>% select(-id, -plot_id, -regeneratedon) %>% collect()
     
     incProgress(0.8)
-    deadwood.sel <- KEL %>% tbl("deadwood") %>% filter(plot_id %in% plot_id_in) %>% collect()
+    deadwood.sel <- KEL %>% tbl("deadwood") %>% filter(plot_id %in% plot_id_in) %>% select(-id, -plot_id) %>% collect()
     
   
     incProgress(0.9)

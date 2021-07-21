@@ -16,7 +16,7 @@ plotMap <- leaflet.df %>%
   addMarkers(~longitude,
              ~latitude,
              icon = ~treeIcons[foresttype],
-             popup =  ~paste('<b>Plot_ID:</b> ', plot_name, '<br><b>Species:</b> ', foresttype, '<br><b>Inventory:</b> ', inventory, '<br><b>Altitude:</b> ', altitude_m))
+             popup =  ~paste('<b>plot_id:</b> ', plot_name, '<br><b>foresttype:</b> ', foresttype, '<br><b>inventory:</b> ', inventory, '<br><b>altitude:</b> ', altitude_m))
 
 #-- aspect
 asp <- leaflet.df %>%

@@ -22,7 +22,7 @@ shinyServer(
     output$gInf <- renderPlot(plotInfo)
     
     output$plotTable <- DT::renderDataTable(
-      plot.df %>% toDT()
+      plot.df %>% select(plot_id = plot_name, inventory = date, country, location, stand, standshort, foresttype, plotsize, dbh_min, altitude_m, slope, aspect) %>% toDT()
     )
 
     # stand level tab ----------------------------------------------------------    
